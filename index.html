@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Atlas — Chief of Staff · Lester</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --bg:#0b0e14;
+    --panel:#11151f;
+    --panel-2:#161b27;
+    --line:#222a3a;
+    --ink:#e8ecf4;
+    --ink-dim:#9aa6bd;
+    --ink-faint:#5e6a82;
+    --gold:#d9a24a;       /* signature amber — the "Atlas" warmth */
+    --gold-soft:rgba(217,162,74,.12);
+    --red:#e5544b;
+    --red-soft:rgba(229,84,75,.12);
+    --green:#52b788;
+    --blue:#4a78d9;
+    --radius:14px;
+    --mono:'JetBrains Mono',monospace;
+    --disp:'Fraunces',Georgia,serif;
+    --body:'Inter',system-ui,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:var(--body);
+    font-size:15px;
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+    min-height:100vh;
+  }
+  /* radial atmosphere behind everything */
+  body::before{
+    content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
+    background:
+      radial-gradient(900px 500px at 78% -8%, rgba(217,162,74,.10), transparent 60%),
+      radial-gradient(700px 600px at -10% 110%, rgba(74,120,217,.08), transparent 55%);
+  }
+  .app{position:relative;z-index:1;display:grid;grid-template-columns:230px 1fr;min-height:100vh}
+
+  /* ---------- Sidebar ---------- */
+  aside{
+    border-right:1px solid var(--line);
+    padding:22px 16px;
+    display:flex;flex-direction:column;gap:26px;
+    position:sticky;top:0;height:100vh;
+  }
+  .brand{display:flex;align-items:center;gap:11px}
+  .brand .mark{
+    width:34px;height:34px;border-radius:9px;
+    background:linear-gradient(145deg,var(--gold),#b6792d);
+    display:grid;place-items:center;
+    font-family:var(--disp);font-weight:600;color:#1a1206;font-size:19px;
+    box-shadow:0 0 0 1px rgba(217,162,74,.3), 0 6px 18px rgba(217,162,74,.18);
+  }
+  .brand b{font-family:var(--disp);font-weight:600;font-size:18px;letter-spacing:.2px}
+  .brand span{display:block;font-size:11px;color:var(--ink-faint);letter-spacing:.14em;text-transform:uppercase;margin-top:1px}
+  nav{display:flex;flex-direction:column;gap:2px}
+  .nav-label{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-faint);padding:0 10px 8px}
+  nav a{
+    display:flex;align-items:center;gap:10px;
+    padding:9px 11px;border-radius:9px;color:var(--ink-dim);
+    text-decoration:none;font-size:14px;font-weight:500;
+    transition:background .15s,color .15s;
+  }
+  nav a .ico{width:7px;height:7px;border-radius:50%;background:var(--ink-faint);transition:background .15s}
+  nav a:hover{background:var(--panel-2);color:var(--ink)}
+  nav a.active{background:var(--gold-soft);color:var(--ink)}
+  nav a.active .ico{background:var(--gold);box-shadow:0 0 8px var(--gold)}
+  .side-foot{margin-top:auto;font-size:12px;color:var(--ink-faint);line-height:1.6}
+  .live{display:inline-flex;align-items:center;gap:6px;color:var(--green);font-weight:500}
+  .live .dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green);animation:pulse 2s infinite}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+
+  /* ---------- Main ---------- */
+  main{padding:30px 36px 60px;max-width:1180px}
+  .topline{display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:14px;margin-bottom:6px}
+  .eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--gold)}
+  h1{font-family:var(--disp);font-weight:500;font-size:38px;line-height:1.05;letter-spacing:-.5px;margin-top:4px}
+  h1 em{font-style:italic;color:var(--gold)}
+  .sub{color:var(--ink-dim);font-size:14px;margin-top:8px;max-width:560px}
+  .stamp{font-family:var(--mono);font-size:12px;color:var(--ink-faint);text-align:right;line-height:1.7}
+
+  .grid{display:grid;gap:18px;margin-top:26px}
+  .cols-3{grid-template-columns:repeat(3,1fr)}
+  .cols-2{grid-template-columns:1.4fr 1fr}
+  .card{
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:20px;
+    position:relative;
+  }
+  .card h2{font-family:var(--disp);font-weight:500;font-size:17px;margin-bottom:3px}
+  .card .meta{font-size:12px;color:var(--ink-faint);margin-bottom:16px}
+  .card-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px}
+  .tag{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;padding:4px 8px;border-radius:6px;border:1px solid var(--line);color:var(--ink-dim)}
+  .tag.live{color:var(--green);border-color:rgba(82,183,136,.3);background:rgba(82,183,136,.07)}
+  .tag.stub{color:var(--ink-faint)}
+
+  /* KPI */
+  .kpi .num{font-family:var(--disp);font-size:40px;font-weight:500;line-height:1}
+  .kpi .lab{font-size:13px;color:var(--ink-dim);margin-top:8px}
+  .kpi .src{font-family:var(--mono);font-size:11px;color:var(--ink-faint);margin-top:4px}
+  .kpi.off .num{color:var(--ink-faint);font-size:22px;font-family:var(--body);font-weight:500;letter-spacing:.02em}
+
+  /* Risk list */
+  .risk{display:flex;gap:12px;padding:13px 0;border-top:1px solid var(--line)}
+  .risk:first-of-type{border-top:none}
+  .risk .sev{flex:0 0 auto;width:9px;height:9px;border-radius:50%;margin-top:6px}
+  .sev.high{background:var(--red);box-shadow:0 0 8px var(--red)}
+  .sev.medium{background:var(--gold)}
+  .sev.low{background:var(--ink-faint)}
+  .risk .cat{font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-faint)}
+  .risk p{font-size:13.5px;color:var(--ink);margin-top:2px}
+
+  /* schedule */
+  .evt{display:grid;grid-template-columns:84px 1fr;gap:14px;padding:11px 0;border-top:1px solid var(--line)}
+  .evt:first-of-type{border-top:none}
+  .evt .t{font-family:var(--mono);font-size:12px;color:var(--ink-dim);white-space:nowrap}
+  .evt .body b{font-size:14px;font-weight:500}
+  .evt .body span{display:block;font-size:12px;color:var(--ink-faint);margin-top:1px}
+  .evt .bar{width:3px;border-radius:3px;background:var(--gold);position:absolute;left:0}
+  .job{color:var(--blue)}.job-bar{background:var(--blue)!important}
+
+  /* emails / actions */
+  .row{display:flex;gap:12px;padding:12px 0;border-top:1px solid var(--line);align-items:flex-start}
+  .row:first-of-type{border-top:none}
+  .pill{font-family:var(--mono);font-size:9.5px;letter-spacing:.06em;text-transform:uppercase;padding:3px 7px;border-radius:5px;white-space:nowrap;margin-top:1px}
+  .pill.risk{background:var(--red-soft);color:var(--red)}
+  .pill.noise{background:var(--panel-2);color:var(--ink-faint)}
+  .pill.product{background:rgba(74,120,217,.12);color:var(--blue)}
+  .pill.billing{background:var(--gold-soft);color:var(--gold)}
+  .row .who{font-size:13px}
+  .row .who b{font-weight:500}
+  .row .who span{display:block;color:var(--ink-faint);font-size:12px;margin-top:1px}
+  .chk{flex:0 0 auto;width:17px;height:17px;border-radius:5px;border:1.5px solid var(--line);margin-top:2px}
+  .chk.p1{border-color:var(--red)}
+  .due{font-family:var(--mono);font-size:11px;color:var(--ink-faint);margin-left:auto;white-space:nowrap}
+  .due.today{color:var(--gold)}
+
+  /* brief */
+  .brief-body{font-size:14px;color:var(--ink-dim);line-height:1.65}
+  .brief-body strong{color:var(--ink);font-weight:500}
+  .alert{display:flex;gap:11px;padding:13px;border-radius:10px;background:var(--red-soft);border:1px solid rgba(229,84,75,.25);margin-bottom:12px}
+  .alert .ico{font-size:16px;line-height:1.2}
+  .alert b{display:block;font-size:13px;margin-bottom:2px}
+  .alert p{font-size:12.5px;color:var(--ink-dim)}
+
+  /* mini calendar */
+  .cal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+  .cal-head b{font-family:var(--disp);font-weight:500;font-size:15px}
+  .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;text-align:center}
+  .cal-grid .dow{font-size:10px;color:var(--ink-faint);font-family:var(--mono);padding-bottom:4px}
+  .cal-grid .d{aspect-ratio:1;display:grid;place-items:center;font-size:12px;color:var(--ink-dim);border-radius:7px}
+  .cal-grid .d.today{background:var(--gold);color:#1a1206;font-weight:600}
+  .cal-grid .d.has::after{content:"";position:absolute;width:3px;height:3px;border-radius:50%;background:var(--gold);transform:translateY(9px)}
+  .cal-grid .d{position:relative}
+
+  .footnote{margin-top:30px;font-size:12px;color:var(--ink-faint);font-family:var(--mono);line-height:1.8;border-top:1px solid var(--line);padding-top:18px}
+  .footnote b{color:var(--ink-dim)}
+
+  @media(max-width:980px){
+    .app{grid-template-columns:1fr}
+    aside{position:static;height:auto;flex-direction:row;flex-wrap:wrap;align-items:center;gap:16px}
+    aside nav{flex-direction:row;flex-wrap:wrap}
+    .nav-label,.side-foot{display:none}
+    .cols-3,.cols-2{grid-template-columns:1fr}
+    main{padding:24px 20px 50px}
+    h1{font-size:30px}
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <!-- SIDEBAR -->
+  <aside>
+    <div class="brand">
+      <div class="mark">A</div>
+      <div><b>Atlas</b><span>Chief of Staff</span></div>
+    </div>
+    <nav>
+      <div class="nav-label">Workspace</div>
+      <a class="active" href="#"><i class="ico"></i>Dashboard</a>
+      <a href="#"><i class="ico"></i>Briefs</a>
+      <a href="#"><i class="ico"></i>Emails</a>
+      <a href="#"><i class="ico"></i>Skills</a>
+      <a href="#"><i class="ico"></i>Research</a>
+      <a href="#"><i class="ico"></i>Graph</a>
+      <a href="#"><i class="ico"></i>Settings</a>
+    </nav>
+    <div class="side-foot">
+      <div class="live"><span class="dot"></span>Live mode</div>
+      <div style="margin-top:6px">Lester · atokwales@gmail.com</div>
+      <div>Winnipeg · CT</div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main>
+    <div class="topline">
+      <div>
+        <div class="eyebrow">Monday · June 29, 2026</div>
+        <h1>Good morning, <em>Lester</em>.</h1>
+        <p class="sub">A maker's day — nine focus blocks, zero external meetings. One real flag needs you before noon.</p>
+      </div>
+      <div class="stamp">
+        BRIEF 08:00 · DEBRIEF 21:00<br>
+        SYNCED FROM GMAIL + CALENDAR<br>
+        SUPABASE · vljtsgjh…muip
+      </div>
+    </div>
+
+    <!-- KPI ROW -->
+    <div class="grid cols-3">
+      <div class="card kpi">
+        <div class="num">9</div>
+        <div class="lab">Events today</div>
+        <div class="src">↳ 0 external · Google Calendar</div>
+      </div>
+      <div class="card kpi">
+        <div class="num">1<span style="font-size:20px;color:var(--ink-faint)">/9</span></div>
+        <div class="lab">Signal emails (7-day)</div>
+        <div class="src">↳ inbox 97% noise · Gmail</div>
+      </div>
+      <div class="card kpi off">
+        <div class="num">Not connected</div>
+        <div class="lab">MRR · Runway · WHOOP</div>
+        <div class="src">↳ Stripe / QuickBooks / WHOOP</div>
+      </div>
+    </div>
+
+    <!-- RISKS + BRIEF -->
+    <div class="grid cols-2">
+      <div class="card">
+        <div class="card-head">
+          <div><h2>Risks &amp; flags</h2><div class="meta">Surfaced across all modules</div></div>
+          <span class="tag live">4 open</span>
+        </div>
+        <div class="risk"><span class="sev high"></span><div><span class="cat">Operational · High</span><p>YouTube channel termination appeal in progress (case 9-0056000041016). Support is awaiting your reply — owned-asset risk.</p></div></div>
+        <div class="risk"><span class="sev medium"></span><div><span class="cat">Strategic · Medium</span><p>Multiple parallel mountains running at once (Mossy, @iamlesterlove, @influenceworkshq, Pneuma, K3) — your stated #1 drift risk.</p></div></div>
+        <div class="risk"><span class="sev low"></span><div><span class="cat">Relationship · Low</span><p>Zero Tier 1 touchpoints (David, COO) in the last 7 days. Consider a proactive ping.</p></div></div>
+        <div class="risk"><span class="sev low"></span><div><span class="cat">Financial · Low</span><p>Anthropic subscription lapsed on a late payment. Minor, but it cuts against the debt-clearing goal.</p></div></div>
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          <div><h2>Morning brief</h2><div class="meta">Generated by Claude · Atlas voice</div></div>
+          <span class="tag live">Today</span>
+        </div>
+        <div class="alert">
+          <div class="ico">🔴</div>
+          <div><b>Respond to YouTube appeal</b><p>Aya from Partner Support followed up Jun 27. This is the only email today that matters. Read &amp; reply before your 9–5 block starts.</p></div>
+        </div>
+        <p class="brief-body">Today protects deep work cleanly — the job sits 9–5, with Influence work bookending it. The honest tension: <strong>Mossy shipped 10 TestFlight builds this week</strong> (real momentum on your one owned product), while the content stack is a second front competing for the same evening block. <strong>Pick one for tonight's 6:30–8:30 deep work. Don't split it.</strong></p>
+      </div>
+    </div>
+
+    <!-- SCHEDULE + ACTIONS/CAL -->
+    <div class="grid cols-2">
+      <div class="card">
+        <div class="card-head">
+          <div><h2>Today's schedule</h2><div class="meta">9 blocks · no conflicts · deep work protected</div></div>
+          <span class="tag live">Calendar</span>
+        </div>
+        <div class="evt"><div class="t">5:30–7:30a</div><div class="body"><b>Outreach Block — Influence</b><span>Mon = new outreach · 10–15 DMs</span></div></div>
+        <div class="evt"><div class="t">7:30–8:00a</div><div class="body"><b>Post Draft — @iamlesterlove</b><span>Builder journey / YouTube insight</span></div></div>
+        <div class="evt"><div class="t">9:00–5:00</div><div class="body"><b class="job">OutreachGenius</b><span>Day job — protected. Lunch block for pipeline.</span></div></div>
+        <div class="evt"><div class="t">12:00–12:45</div><div class="body"><b>Lunch — Client + Pipeline</b><span>Monday = K3 cadence check</span></div></div>
+        <div class="evt"><div class="t">6:00–6:30p</div><div class="body"><b>Transition + Debrief</b><span>Shut the job down mentally</span></div></div>
+        <div class="evt"><div class="t">6:30–8:30p</div><div class="body"><b>Deep Work — Influence</b><span>Client deliverables · faith channel · K3 prep</span></div></div>
+        <div class="evt"><div class="t">8:30–9:00p</div><div class="body"><b>Loom + Discovery Prep</b><span>Looms for warm prospects · Tide Framework</span></div></div>
+        <div class="evt"><div class="t">9:00–10:00p</div><div class="body"><b>Gym</b><span>Non-negotiable</span></div></div>
+        <div class="evt"><div class="t">10:00–10:15</div><div class="body"><b>Shutdown Ritual</b><span>Set tomorrow's one thing</span></div></div>
+      </div>
+
+      <div class="grid" style="gap:18px;align-content:start">
+        <div class="card">
+          <div class="cal-head"><b>June 2026</b><span class="tag stub">Today · 29</span></div>
+          <div class="cal-grid">
+            <div class="dow">S</div><div class="dow">M</div><div class="dow">T</div><div class="dow">W</div><div class="dow">T</div><div class="dow">F</div><div class="dow">S</div>
+            <div class="d" style="grid-column:2">1</div><div class="d">2</div><div class="d">3</div><div class="d">4</div><div class="d">5</div><div class="d">6</div>
+            <div class="d">7</div><div class="d">8</div><div class="d">9</div><div class="d">10</div><div class="d">11</div><div class="d">12</div><div class="d">13</div>
+            <div class="d">14</div><div class="d">15</div><div class="d">16</div><div class="d">17</div><div class="d">18</div><div class="d">19</div><div class="d">20</div>
+            <div class="d">21</div><div class="d">22</div><div class="d">23</div><div class="d">24</div><div class="d">25</div><div class="d">26</div><div class="d">27</div>
+            <div class="d">28</div><div class="d today">29</div><div class="d">30</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-head"><div><h2>Action items</h2><div class="meta">Top priorities</div></div><span class="tag live">3</span></div>
+          <div class="row"><span class="chk p1"></span><div class="who"><b>Respond to YouTube termination appeal</b><span>case 9-0056000041016</span></div><span class="due today">Today</span></div>
+          <div class="row"><span class="chk p1"></span><div class="who"><b>Pick tonight's deep-work focus</b><span>Mossy vs Influence content</span></div><span class="due today">Today</span></div>
+          <div class="row"><span class="chk"></span><div class="who"><b>Proactive ping to David / COO</b><span>no Tier 1 contact in 7 days</span></div><span class="due">This wk</span></div>
+        </div>
+
+        <div class="card">
+          <div class="card-head"><div><h2>Priority emails</h2><div class="meta">Triaged from 9 threads</div></div><span class="tag live">Gmail</span></div>
+          <div class="row"><span class="pill risk">Risk</span><div class="who"><b>YouTube Partner Support</b><span>Appeal follow-up · respond today</span></div></div>
+          <div class="row"><span class="pill product">Product</span><div class="who"><b>Mossy: AI Personal Finance</b><span>Build 30 — 10 ships this week</span></div></div>
+          <div class="row"><span class="pill billing">Billing</span><div class="who"><b>Anthropic</b><span>Subscription restored after late pay</span></div></div>
+          <div class="row"><span class="pill noise">Noise</span><div class="who"><b>TestFlight ×8 · promos</b><span>Filtered — no action</span></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="footnote">
+      <b>CONNECTED:</b> Gmail · Google Calendar · Supabase · Netlify &nbsp;|&nbsp; <b>STUBBED (honest):</b> Stripe · QuickBooks · WHOOP · Fieldy · Firecrawl · Resend<br>
+      Atlas does not fabricate. Where a source isn't live, the panel says so rather than inventing a number.
+    </div>
+  </main>
+</div>
+</body>
+</html>
