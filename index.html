@@ -378,13 +378,23 @@
 
     <!-- GRAPH -->
     <section class="view" id="view-graph" hidden>
-      <div class="topline"><div><div class="eyebrow">Knowledge Graph · Supabase</div><h1>Graph</h1><p class="sub">People, companies, and relationships Atlas tracks. Live from your database.</p></div></div>
-      <div class="card" style="margin-top:24px">
-        <div class="card-head"><div><h2>Tier 1 relationships</h2><div class="meta">From contacts table</div></div><span class="tag live">3 tracked</span></div>
-        <div class="row"><span class="pill risk">T1</span><div class="who"><b>David</b><span>Founder · Outreach Genius — no inbound in 7 days</span></div></div>
-        <div class="row"><span class="pill risk">T1</span><div class="who"><b>COO</b><span>Outreach Genius — no inbound in 7 days</span></div></div>
-        <div class="row"><span class="pill product">T1</span><div class="who"><b>Key Enterprise Customers</b><span>Various — no escalations in inbox</span></div></div>
+      <div class="topline"><div><div class="eyebrow">Knowledge Graph - Supabase</div><h1>Graph</h1><p class="sub">People, companies, events, emails, and deals Atlas tracks, rendered live from your data.</p></div></div>
+      <div class="card" style="margin-top:24px;padding:0;overflow:hidden">
+        <div class="card-head" style="padding:18px 20px 0">
+          <div><h2>Relationship map</h2><div class="meta" id="graph-meta">Loading...</div></div>
+          <span class="tag live" id="graph-source">live</span>
+        </div>
+        <div id="graph-filters" style="display:flex;flex-wrap:wrap;gap:6px;padding:12px 20px 0"></div>
+        <div style="display:flex;gap:0;flex-wrap:wrap">
+          <div style="flex:1 1 420px;min-height:460px;position:relative">
+            <canvas id="graph-canvas" style="width:100%;height:460px;display:block"></canvas>
+          </div>
+          <div id="graph-inspector" style="flex:0 0 260px;border-left:1px solid var(--line);padding:18px 20px;min-height:460px">
+            <div class="meta">Click a node to inspect its relationships.</div>
+          </div>
+        </div>
       </div>
+      <script id="atlas-graph-data" type="application/json">{"nodes":[{"id":"founder-lester","name":"Lester","type":"Person","mention_count":99,"last_seen_at":null,"emails":["atokwales@gmail.com"]},{"id":"person-11fffdd0","name":"David","type":"Person","mention_count":10,"last_seen_at":null,"emails":[]},{"id":"company-outreach-genius","name":"Outreach Genius","type":"Company","mention_count":5,"last_seen_at":null,"emails":[]},{"id":"person-592ad160","name":"COO","type":"Person","mention_count":10,"last_seen_at":null,"emails":[]},{"id":"person-c88c40b7","name":"Key Enterprise Customers","type":"Person","mention_count":10,"last_seen_at":null,"emails":[]},{"id":"company-various","name":"Various","type":"Company","mention_count":5,"last_seen_at":null,"emails":[]},{"id":"email-08a623a4","name":"[9-0056000041016] YouTube Suppor","type":"Email","mention_count":1,"last_seen_at":null,"emails":["yt-partner-support@google.com"]},{"id":"email-f8820434","name":"Anthropic receipt","type":"Email","mention_count":1,"last_seen_at":null,"emails":["invoice+statements@mail.anthropic.com"]},{"id":"email-87a8b697","name":"Subscription restored","type":"Email","mention_count":1,"last_seen_at":null,"emails":["no-reply@mail.anthropic.com"]},{"id":"email-8e649cb8","name":"Mossy build 30","type":"Email","mention_count":1,"last_seen_at":null,"emails":["testflight_no_reply@email.apple.com"]},{"id":"event-8521f665","name":"Outreach Block \u2014 Influence","type":"Event","mention_count":1,"last_seen_at":null,"emails":[]},{"id":"event-ede9c30e","name":"Post Draft \u2014 @iamlesterlove","type":"Event","mention_count":1,"last_seen_at":null,"emails":[]},{"id":"event-3f9c7a16","name":"OutreachGenius","type":"Event","mention_count":1,"last_seen_at":null,"emails":[]},{"id":"event-e2c3bcec","name":"Lunch \u2014 Client + Pipeline","type":"Event","mention_count":1,"last_seen_at":null,"emails":[]},{"id":"event-172764ef","name":"Deep Work \u2014 Influence","type":"Event","mention_count":1,"last_seen_at":null,"emails":[]},{"id":"deal-mossy","name":"Mossy (product)","type":"Deal","mention_count":8,"last_seen_at":null,"emails":[]}],"edges":[{"source":"founder-lester","target":"person-11fffdd0","edge_type":"emailed_with","weight":3,"confidence":0.7},{"source":"person-11fffdd0","target":"company-outreach-genius","edge_type":"linked_to","weight":2,"confidence":0.9},{"source":"founder-lester","target":"person-592ad160","edge_type":"emailed_with","weight":3,"confidence":0.7},{"source":"person-592ad160","target":"company-outreach-genius","edge_type":"linked_to","weight":2,"confidence":0.9},{"source":"founder-lester","target":"person-c88c40b7","edge_type":"emailed_with","weight":3,"confidence":0.7},{"source":"person-c88c40b7","target":"company-various","edge_type":"linked_to","weight":2,"confidence":0.9},{"source":"founder-lester","target":"email-08a623a4","edge_type":"emailed_with","weight":1,"confidence":0.8},{"source":"founder-lester","target":"email-f8820434","edge_type":"emailed_with","weight":1,"confidence":0.8},{"source":"founder-lester","target":"email-87a8b697","edge_type":"emailed_with","weight":1,"confidence":0.8},{"source":"founder-lester","target":"email-8e649cb8","edge_type":"emailed_with","weight":1,"confidence":0.8},{"source":"founder-lester","target":"event-8521f665","edge_type":"attended_with","weight":1,"confidence":1},{"source":"founder-lester","target":"event-ede9c30e","edge_type":"attended_with","weight":1,"confidence":1},{"source":"founder-lester","target":"event-3f9c7a16","edge_type":"attended_with","weight":1,"confidence":1},{"source":"founder-lester","target":"event-e2c3bcec","edge_type":"attended_with","weight":1,"confidence":1},{"source":"founder-lester","target":"event-172764ef","edge_type":"attended_with","weight":1,"confidence":1},{"source":"founder-lester","target":"deal-mossy","edge_type":"committed_to","weight":5,"confidence":0.9},{"source":"email-8e649cb8","target":"deal-mossy","edge_type":"reported_by","weight":2,"confidence":0.8}],"last_synced_at":"2026-06-30T22:13:55.430Z","source":"live"}</script>
     </section>
 
     <!-- SETTINGS -->
@@ -418,8 +428,131 @@
     }
     links.forEach(function(l){
       l.style.cursor = 'pointer';
-      l.addEventListener('click', function(e){ e.preventDefault(); show(l.getAttribute('data-view')); });
+      l.addEventListener('click', function(e){ e.preventDefault(); show(l.getAttribute('data-view')); if(l.getAttribute('data-view')==='graph'){ initGraph(); } });
     });
+
+    // ---------- Knowledge Graph renderer (canvas force-layout, no deps) ----------
+    var NODE_COLORS = { Person:'#d9a24a', Company:'#4a78d9', Event:'#52b788', Email:'#e5544b', Document:'#9b7ede', Deal:'#e09f3e' };
+    var EDGE_COLORS = { attended_with:'#52b788', emailed_with:'#e5544b', committed_to:'#d9a24a', reported_by:'#4a78d9', linked_to:'#5e6a82', discussed_with:'#9b7ede', delegated_to:'#e09f3e' };
+    var graphStarted = false, sim = null, GN = [], GE = [], activeTypes = null, selected = null;
+
+    function loadGraphData(){
+      var el = document.getElementById('atlas-graph-data');
+      try { return JSON.parse(el.textContent); }
+      catch(e){ return { nodes:[], edges:[], last_synced_at:null, source:'demo' }; }
+    }
+
+    function initGraph(){
+      if (graphStarted) return;
+      graphStarted = true;
+      var data = loadGraphData();
+      // Fallback demo graph if empty — spec requirement
+      if (!data.nodes || data.nodes.length === 0){
+        data = { source:'demo', nodes:[
+          {id:'d1',name:'You',type:'Person'},{id:'d2',name:'Acme Co',type:'Company'},
+          {id:'d3',name:'Kickoff',type:'Event'},{id:'d4',name:'Intro email',type:'Email'}],
+          edges:[{source:'d1',target:'d2',edge_type:'linked_to'},{source:'d1',target:'d3',edge_type:'attended_with'},{source:'d1',target:'d4',edge_type:'emailed_with'}]};
+      }
+      GN = data.nodes.map(function(n){ return Object.assign({}, n); });
+      GE = data.edges.map(function(e){ return Object.assign({}, e); });
+      document.getElementById('graph-source').textContent = data.source || 'live';
+      document.getElementById('graph-source').className = 'tag ' + (data.source==='demo' ? 'stub' : 'live');
+      document.getElementById('graph-meta').textContent = GN.length + ' nodes - ' + GE.length + ' relationships';
+      buildFilters();
+      layoutAndRender();
+    }
+
+    function buildFilters(){
+      var types = ['All'].concat(Object.keys(NODE_COLORS).filter(function(t){ return GN.some(function(n){return n.type===t;}); }));
+      var wrap = document.getElementById('graph-filters');
+      wrap.innerHTML = '';
+      types.forEach(function(t){
+        var b = document.createElement('button');
+        b.textContent = t;
+        b.style.cssText = 'font-family:var(--mono);font-size:11px;padding:5px 10px;border-radius:6px;border:1px solid var(--line);background:transparent;color:'+(t==='All'?'var(--ink)':NODE_COLORS[t])+';cursor:pointer';
+        if (t!=='All'){ var dot=document.createElement('span'); }
+        b.addEventListener('click', function(){
+          activeTypes = (t==='All') ? null : [t];
+          layoutAndRender();
+          Array.prototype.forEach.call(wrap.children,function(c){ c.style.background='transparent'; });
+          b.style.background = 'rgba(217,162,74,.15)';
+        });
+        wrap.appendChild(b);
+      });
+    }
+
+    function visibleNodes(){ return activeTypes ? GN.filter(function(n){ return activeTypes.indexOf(n.type)>=0 || n.id==='founder-lester'; }) : GN; }
+    function visibleEdges(){ var ids = visibleNodes().reduce(function(m,n){m[n.id]=1;return m;},{}); return GE.filter(function(e){ var s=(e.source.id||e.source),t=(e.target.id||e.target); return ids[s]&&ids[t]; }); }
+
+    function layoutAndRender(){
+      var canvas = document.getElementById('graph-canvas');
+      var rect = canvas.getBoundingClientRect();
+      var W = canvas.width = rect.width * (window.devicePixelRatio||1);
+      var H = canvas.height = rect.height * (window.devicePixelRatio||1);
+      var dpr = window.devicePixelRatio||1;
+      var ctx = canvas.getContext('2d');
+      var nodes = visibleNodes(), edges = visibleEdges();
+      // init positions
+      nodes.forEach(function(n,i){ if(n.x==null){ n.x = W/2 + Math.cos(i)*120*dpr; n.y = H/2 + Math.sin(i)*120*dpr; } n.vx=0; n.vy=0; });
+      var byId = nodes.reduce(function(m,n){m[n.id]=n;return m;},{});
+
+      var iter=0;
+      function step(){
+        // simple force sim: repulsion + spring + center
+        for(var i=0;i<nodes.length;i++){ var a=nodes[i];
+          for(var j=i+1;j<nodes.length;j++){ var b=nodes[j];
+            var dx=a.x-b.x, dy=a.y-b.y, d=Math.sqrt(dx*dx+dy*dy)||1, f=(4000*dpr)/(d*d);
+            var ux=dx/d, uy=dy/d; a.vx+=ux*f; a.vy+=uy*f; b.vx-=ux*f; b.vy-=uy*f;
+          }
+          a.vx += (W/2 - a.x)*0.002; a.vy += (H/2 - a.y)*0.002;
+        }
+        edges.forEach(function(e){ var s=byId[e.source.id||e.source], t=byId[e.target.id||e.target]; if(!s||!t)return;
+          var dx=t.x-s.x, dy=t.y-s.y, d=Math.sqrt(dx*dx+dy*dy)||1, f=(d-90*dpr)*0.01;
+          var ux=dx/d, uy=dy/d; s.vx+=ux*f; s.vy+=uy*f; t.vx-=ux*f; t.vy-=uy*f;
+        });
+        nodes.forEach(function(n){ n.x+=Math.max(-8,Math.min(8,n.vx)); n.y+=Math.max(-8,Math.min(8,n.vy)); n.vx*=0.85; n.vy*=0.85;
+          n.x=Math.max(30*dpr,Math.min(W-30*dpr,n.x)); n.y=Math.max(30*dpr,Math.min(H-30*dpr,n.y)); });
+        render(ctx,nodes,edges,byId,dpr);
+        if(iter++<180) requestAnimationFrame(step);
+      }
+      step();
+
+      canvas.onclick = function(ev){
+        var r = canvas.getBoundingClientRect();
+        var mx=(ev.clientX-r.left)*dpr, my=(ev.clientY-r.top)*dpr, hit=null;
+        nodes.forEach(function(n){ if(Math.hypot(n.x-mx,n.y-my) < 14*dpr) hit=n; });
+        if(hit){ selected=hit; inspect(hit,edges,byId); render(ctx,nodes,edges,byId,dpr); }
+      };
+    }
+
+    function render(ctx,nodes,edges,byId,dpr){
+      ctx.clearRect(0,0,ctx.canvas.width,ctx.canvas.height);
+      edges.forEach(function(e){ var s=byId[e.source.id||e.source], t=byId[e.target.id||e.target]; if(!s||!t)return;
+        ctx.strokeStyle = EDGE_COLORS[e.edge_type]||'#333'; ctx.globalAlpha=0.5; ctx.lineWidth=1.2*dpr;
+        ctx.beginPath(); ctx.moveTo(s.x,s.y); ctx.lineTo(t.x,t.y); ctx.stroke(); ctx.globalAlpha=1;
+      });
+      nodes.forEach(function(n){
+        var r = (n.id==='founder-lester'?13:8)*dpr;
+        var isSel = selected && selected.id===n.id;
+        ctx.beginPath(); ctx.arc(n.x,n.y,r,0,6.283); ctx.fillStyle=NODE_COLORS[n.type]||'#888'; ctx.fill();
+        if(isSel){ ctx.lineWidth=2.5*dpr; ctx.strokeStyle='#fff'; ctx.stroke(); }
+        ctx.fillStyle='#e8ecf4'; ctx.font=(11*dpr)+'px Inter, sans-serif'; ctx.fillText(n.name, n.x+r+3*dpr, n.y+4*dpr);
+      });
+    }
+
+    function inspect(node,edges,byId){
+      var box=document.getElementById('graph-inspector');
+      var rels=edges.filter(function(e){ return (e.source.id||e.source)===node.id || (e.target.id||e.target)===node.id; });
+      var html='<div style="font-family:var(--disp);font-size:16px;margin-bottom:2px">'+node.name+'</div>';
+      html+='<div class="meta" style="color:'+(NODE_COLORS[node.type]||'#888')+'">'+node.type+'</div>';
+      html+='<div style="margin-top:14px;font-size:12px;color:var(--ink-faint);font-family:var(--mono)">'+rels.length+' relationships</div>';
+      rels.forEach(function(e){
+        var other = (e.source.id||e.source)===node.id ? (e.target.id||e.target) : (e.source.id||e.source);
+        var on = byId[other]; if(!on) return;
+        html+='<div style="display:flex;gap:8px;padding:8px 0;border-top:1px solid var(--line);font-size:12.5px;align-items:center"><span style="width:7px;height:7px;border-radius:50%;background:'+(EDGE_COLORS[e.edge_type]||'#666')+'"></span><div><b>'+on.name+'</b><div style="color:var(--ink-faint);font-size:11px">'+e.edge_type+'</div></div></div>';
+      });
+      box.innerHTML=html;
+    }
   })();
 </script>
 
