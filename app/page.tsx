@@ -40,11 +40,21 @@ function Dashboard({ d }: { d: any }) {
   const [actions, setActions] = useState<any[]>(d?.action_items ?? []);
   const [busy, setBusy] = useState<string | null>(null);
 
+  // Keep local state in sync if the dashboard data changes (e.g. refetch),
+  // but never clobber an in-flight optimistic update.
+  useEffect(() => {
+    if (!busy) setActions(d?.action_items ?? []);
+  }, [d]); // eslint-disable-line react-hooks/exhaustive-deps
+
   async function toggle(a: any) {
-    if (!a.id || busy) return;
+    if (busy) return;
+    if (!a.id) {
+      console.warn("Action item has no id — dashboard route may not return it. Cannot persist.");
+      return;
+    }
     const next = a.status === "done" ? "open" : "done";
     setBusy(a.id);
-    // optimistic update
+    // optimistic: flip locally and hold it
     setActions((prev) => prev.map((x) => (x.id === a.id ? { ...x, status: next } : x)));
     try {
       const res = await fetch("/api/actions/toggle", {
@@ -52,10 +62,13 @@ function Dashboard({ d }: { d: any }) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id: a.id, status: next }),
       });
-      const j = await res.json();
-      if (!j.ok) {
-        // revert on failure
+      const j = await res.json().catch(() => ({ ok: false }));
+      // Only revert if the server explicitly reports failure.
+      if (j && j.ok === false) {
         setActions((prev) => prev.map((x) => (x.id === a.id ? { ...x, status: a.status } : x)));
+      } else if (j && j.status) {
+        // Trust the server's returned status as the source of truth.
+        setActions((prev) => prev.map((x) => (x.id === a.id ? { ...x, status: j.status } : x)));
       }
     } catch {
       setActions((prev) => prev.map((x) => (x.id === a.id ? { ...x, status: a.status } : x)));
