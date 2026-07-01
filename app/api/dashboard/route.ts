@@ -22,7 +22,7 @@ export async function GET() {
       sb.from("calendar_events").select("summary,description,starts_at,ends_at,is_external").order("starts_at"),
       sb.from("emails").select("sender,subject,category,requires_action,received_at").order("received_at", { ascending: false }),
       sb.from("risks").select("category,severity,text,status").order("severity"),
-      sb.from("action_items").select("text,due,priority,status,owner").order("priority"),
+      sb.from("action_items").select("id,text,due,priority,status,owner").order("priority"),
       sb.from("contacts").select("name,title,company,tier,last_contact_date,notes").order("tier"),
       sb.from("kpis").select("label,value,source,is_connected"),
     ]);
