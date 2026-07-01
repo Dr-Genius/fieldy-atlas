@@ -36,7 +36,34 @@ export default function Home() {
   );
 }
 function Dashboard({ d }: { d: any }) {
-  const events = d?.events ?? [], risks = d?.risks ?? [], emails = d?.emails ?? [], actions = d?.action_items ?? [];
+  const events = d?.events ?? [], risks = d?.risks ?? [], emails = d?.emails ?? [];
+  const [actions, setActions] = useState<any[]>(d?.action_items ?? []);
+  const [busy, setBusy] = useState<string | null>(null);
+
+  async function toggle(a: any) {
+    if (!a.id || busy) return;
+    const next = a.status === "done" ? "open" : "done";
+    setBusy(a.id);
+    // optimistic update
+    setActions((prev) => prev.map((x) => (x.id === a.id ? { ...x, status: next } : x)));
+    try {
+      const res = await fetch("/api/actions/toggle", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: a.id, status: next }),
+      });
+      const j = await res.json();
+      if (!j.ok) {
+        // revert on failure
+        setActions((prev) => prev.map((x) => (x.id === a.id ? { ...x, status: a.status } : x)));
+      }
+    } catch {
+      setActions((prev) => prev.map((x) => (x.id === a.id ? { ...x, status: a.status } : x)));
+    } finally {
+      setBusy(null);
+    }
+  }
+
   return (<>
     <div className="topline"><div><div className="eyebrow">{d?.source === "live" ? "Live · Supabase" : "Demo"}</div><h1>Good morning, <em>{d?.founder?.first_name ?? "Lester"}</em>.</h1><p className="sub">{events.length} events today · {emails.filter((e: any) => e.requires_action).length} email needs action.</p></div></div>
     <div className="grid cols-3">
@@ -47,8 +74,15 @@ function Dashboard({ d }: { d: any }) {
     <div className="grid cols-2">
       <div className="card"><div className="card-head"><div><h2>Risks &amp; flags</h2><div className="meta">Across all modules</div></div><span className="tag live">{risks.length}</span></div>
         {risks.map((r: any, i: number) => (<div className="risk" key={i}><span className={"sev " + r.severity} /><div><span className="cat">{r.category} · {r.severity}</span><p>{r.text}</p></div></div>))}</div>
-      <div className="card"><div className="card-head"><div><h2>Action items</h2><div className="meta">Top priorities</div></div><span className="tag live">{actions.length}</span></div>
-        {actions.map((a: any, i: number) => (<div className="row" key={i}><span className={"chk" + (a.priority === 1 ? " p1" : "")} /><div className="who"><b>{a.text}</b></div><span className={"due" + (a.due === "Today" ? " today" : "")}>{a.due}</span></div>))}</div>
+      <div className="card"><div className="card-head"><div><h2>Action items</h2><div className="meta">Top priorities · click to complete</div></div><span className="tag live">{actions.filter((a) => a.status !== "done").length}</span></div>
+        {actions.map((a: any) => (
+          <div className="row action-row" key={a.id ?? a.text} onClick={() => toggle(a)} style={{ cursor: a.id ? "pointer" : "default", opacity: busy === a.id ? 0.6 : 1 }}>
+            <span className={"chk" + (a.priority === 1 ? " p1" : "") + (a.status === "done" ? " done" : "")} aria-checked={a.status === "done"} role="checkbox" />
+            <div className="who"><b style={{ textDecoration: a.status === "done" ? "line-through" : "none", color: a.status === "done" ? "var(--ink-faint)" : "var(--ink)" }}>{a.text}</b></div>
+            <span className={"due" + (a.due === "Today" ? " today" : "")}>{a.due}</span>
+          </div>
+        ))}
+      </div>
     </div>
     <div className="card" style={{ marginTop: 18 }}><div className="card-head"><div><h2>Today's schedule</h2><div className="meta">{events.length} blocks · from Calendar</div></div><span className="tag live">Calendar</span></div>
       {events.map((ev: any, i: number) => (<div className="evt" key={i}><div className="t">{new Date(ev.starts_at).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}</div><div className="body"><b>{ev.summary}</b><span>{ev.description}</span></div></div>))}</div>
