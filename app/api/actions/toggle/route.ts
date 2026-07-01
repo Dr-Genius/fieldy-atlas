@@ -1,47 +1,40 @@
 import { NextResponse } from "next/server";
 import { getSupabase } from "@/lib/supabase";
 
-export const dynamic = "force-dynamic"; // always fresh, never cached at build
+export const dynamic = "force-dynamic";
 
-export async function GET() {
+// Toggle an action item's status between 'open' and 'done'.
+// Server-side only — the service-role key never reaches the browser.
+export async function POST(req: Request) {
   const sb = getSupabase();
-
-  // Graceful fallback: no DB creds → demo state, never a 500.
   if (!sb) {
-    return NextResponse.json({
-      source: "demo",
-      founder: { first_name: "Lester", email: "atokwales@gmail.com" },
-      events: [], emails: [], risks: [], action_items: [], contacts: [], kpis: [],
-      last_synced_at: null,
-    });
+    return NextResponse.json({ ok: false, error: "No database connection" }, { status: 200 });
   }
 
+  let body: { id?: string; status?: string };
   try {
-    const [founder, events, emails, risks, actions, contacts, kpis] = await Promise.all([
-      sb.from("founder").select("first_name,email,role,morning_brief_time,debrief_time").limit(1).single(),
-      sb.from("calendar_events").select("summary,description,starts_at,ends_at,is_external").order("starts_at"),
-      sb.from("emails").select("sender,subject,category,requires_action,received_at").order("received_at", { ascending: false }),
-      sb.from("risks").select("category,severity,text,status").order("severity"),
-      sb.from("action_items").select("id,text,due,priority,status,owner").order("priority"),
-      sb.from("contacts").select("name,title,company,tier,last_contact_date,notes").order("tier"),
-      sb.from("kpis").select("label,value,source,is_connected"),
-    ]);
+    body = await req.json();
+  } catch {
+    return NextResponse.json({ ok: false, error: "Invalid request body" }, { status: 400 });
+  }
 
-    return NextResponse.json({
-      source: "live",
-      founder: founder.data ?? null,
-      events: events.data ?? [],
-      emails: emails.data ?? [],
-      risks: risks.data ?? [],
-      action_items: actions.data ?? [],
-      contacts: contacts.data ?? [],
-      kpis: kpis.data ?? [],
-      last_synced_at: new Date().toISOString(),
-    });
+  if (!body.id) {
+    return NextResponse.json({ ok: false, error: "Missing id" }, { status: 400 });
+  }
+
+  const nextStatus = body.status === "done" ? "done" : "open";
+
+  try {
+    const { data, error } = await sb
+      .from("action_items")
+      .update({ status: nextStatus })
+      .eq("id", body.id)
+      .select("id,status")
+      .single();
+
+    if (error) throw error;
+    return NextResponse.json({ ok: true, id: data.id, status: data.status });
   } catch (err: any) {
-    return NextResponse.json(
-      { source: "error", detail: String(err?.message ?? err), events: [], emails: [], risks: [], action_items: [], contacts: [], kpis: [] },
-      { status: 200 } // 200 so the UI degrades instead of breaking
-    );
+    return NextResponse.json({ ok: false, error: String(err?.message ?? err) }, { status: 200 });
   }
 }
